@@ -189,7 +189,7 @@ public class LabyrinthGUI extends JFrame {
             setStatut("✔ Labyrinthe généré : "
                 + labyrinthe.getLignes() + "×" + labyrinthe.getColonnes());
             zoneStats.setText("Labyrinthe généré.\nLancez DFS ou BFS.");
-            pack();
+            
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                 "Erreur lors de la génération :\n" + ex.getMessage(),

@@ -10,7 +10,8 @@ public class Labyrinth {
     private int lignes;
     private int colonnes;
     private int[] depart;   
-    private int[] arrivee;  
+    private int[] arrivee;
+    private boolean[][] explorees;  // Grille pour les cases explorées  
 
     /**
      * Construit un labyrinthe à partir d'une grille de caractères.
@@ -20,6 +21,7 @@ public class Labyrinth {
         this.grille = grille;
         this.lignes = grille.length;
         this.colonnes = grille[0].length;
+        this.explorees = new boolean[lignes][colonnes];
         detecterDepartArrivee();
     }
 
@@ -41,6 +43,10 @@ public class Labyrinth {
     
     public char[][] getGrille() { 
         return grille; 
+    }
+
+    public boolean[][] getExplorees() {
+        return explorees;
     }
 
     /** Parcourt la grille pour trouver S et E. */
@@ -97,13 +103,30 @@ public class Labyrinth {
     }
 
     /**
-     * Remet le labyrinthe à son état initial (efface les '+').
+     * Remet le labyrinthe à son état initial (efface les '+' et les explorer).
     */
     public void reinitialiser() {
         for (int i = 0; i < lignes; i++) {
             for (int j = 0; j < colonnes; j++) {
                 if (grille[i][j] == '+') grille[i][j] = '=';
             }
+        }
+        for (int i = 0; i < lignes; i++) {
+            for (int j = 0; j < colonnes; j++) {
+                explorees[i][j] = false;
+            }
+        }
+    }
+
+    /**
+     * Marque les cases explorées avec '*'.
+    */
+    public void marquerExplorees(List<int[]> explorees) {
+        if (explorees == null) return;
+        for (int[] case_ : explorees) {
+            int l = case_[0];
+            int c = case_[1];
+            this.explorees[l][c] = true;
         }
     }
 

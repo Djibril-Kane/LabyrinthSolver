@@ -18,6 +18,7 @@ public class LabyrinthGUI extends JFrame {
     private static final Color COULEUR_DEPART   = new Color(39,  174, 96);
     private static final Color COULEUR_ARRIVEE  = new Color(231, 76,  60);
     private static final Color COULEUR_CHEMIN   = new Color(52,  152, 219);
+    private static final Color COULEUR_EXPLOREE = new Color(230, 126, 34);  // Orange pour exploré
     private static final Color COULEUR_FOND     = new Color(30,  30,  30);
 
     // ── État ─────────────────────────────────────────────────────
@@ -214,7 +215,8 @@ public class LabyrinthGUI extends JFrame {
         }
 
         labyrinthe.marquerChemin(chemin);
-        grillePanel.setLabyrinth(labyrinthe, couleurChemin);
+        labyrinthe.marquerExplorees(solveur.getCellsExplorees());
+        grillePanel.setLabyrinth(labyrinthe, couleurChemin, solveur.getCellsExplorees());
 
         double ms = solveur.getTempsExecution() / 1_000_000.0;
         setStatut("✔ " + nom + " — chemin : " + chemin.size()
@@ -265,9 +267,10 @@ public class LabyrinthGUI extends JFrame {
         zoneStats.setText(rapport);
         setStatut("⇌ Comparaison terminée — chemin le plus court : " + vainqueurChemin);
 
-        // Affiche le chemin BFS (optimal) en orange sur la grille
+        // Affiche le chemin BFS (optimal) en bleu sur la grille
         labyrinthe.marquerChemin(chBFS);
-        grillePanel.setLabyrinth(labyrinthe, new Color(230, 126, 34));
+        labyrinthe.marquerExplorees(bfs.getCellsExplorees());
+        grillePanel.setLabyrinth(labyrinthe, COULEUR_CHEMIN, bfs.getCellsExplorees());
         labyrinthe.reinitialiser();
     }
 
@@ -287,12 +290,13 @@ public class LabyrinthGUI extends JFrame {
     }
 
     private JPanel construireLegende() {
-        JPanel p = new JPanel(new GridLayout(5, 1, 2, 2));
+        JPanel p = new JPanel(new GridLayout(6, 1, 2, 2));
         p.setBackground(new Color(45, 45, 45));
         p.add(entreeLegende(COULEUR_MUR,     "Mur"));
         p.add(entreeLegende(COULEUR_PASSAGE, "Passage"));
         p.add(entreeLegende(COULEUR_DEPART,  "Départ (S)"));
         p.add(entreeLegende(COULEUR_ARRIVEE, "Arrivée (E)"));
+        p.add(entreeLegende(COULEUR_EXPLOREE, "Explorée"));
         p.add(entreeLegende(COULEUR_CHEMIN,  "Chemin"));
         return p;
     }
@@ -336,10 +340,26 @@ public class LabyrinthGUI extends JFrame {
 
         private Labyrinth lab      = null;
         private Color couleurChemin = COULEUR_CHEMIN;
+        private List<int[]> cellsExplorees = null;
 
         public void setLabyrinth(Labyrinth lab, Color couleurChemin) {
             this.lab = lab;
             if (couleurChemin != null) this.couleurChemin = couleurChemin;
+            this.cellsExplorees = null;
+            if (lab != null) {
+                setPreferredSize(new Dimension(
+                    lab.getColonnes() * CELL_SIZE,
+                    lab.getLignes()   * CELL_SIZE
+                ));
+            }
+            revalidate();
+            repaint();
+        }
+
+        public void setLabyrinth(Labyrinth lab, Color couleurChemin, List<int[]> explorees) {
+            this.lab = lab;
+            if (couleurChemin != null) this.couleurChemin = couleurChemin;
+            this.cellsExplorees = explorees;
             if (lab != null) {
                 setPreferredSize(new Dimension(
                     lab.getColonnes() * CELL_SIZE,
@@ -366,6 +386,15 @@ public class LabyrinthGUI extends JFrame {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             char[][] grille = lab.getGrille();
+            boolean[][] explorees = lab.getExplorees();
+
+            // Créer un set des cellules explorées pour vérification rapide
+            java.util.Set<String> exploreeSet = new java.util.HashSet<>();
+            if (cellsExplorees != null) {
+                for (int[] cell : cellsExplorees) {
+                    exploreeSet.add(cell[0] + "," + cell[1]);
+                }
+            }
 
             for (int i = 0; i < lab.getLignes(); i++) {
                 for (int j = 0; j < lab.getColonnes(); j++) {
@@ -375,7 +404,14 @@ public class LabyrinthGUI extends JFrame {
                         case 'S' -> COULEUR_DEPART;
                         case 'E' -> COULEUR_ARRIVEE;
                         case '+' -> couleurChemin;
-                        default  -> COULEUR_PASSAGE;
+                        default  -> {
+                            // Vérifier si c'est une case explorée
+                            if (exploreeSet.contains(i + "," + j)) {
+                                yield COULEUR_EXPLOREE;  // Orange pour les explorées
+                            } else {
+                                yield COULEUR_PASSAGE;
+                            }
+                        }
                     };
 
                     int x = j * CELL_SIZE;

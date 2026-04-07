@@ -32,10 +32,12 @@ public class DFSSolver extends LabyrinthSolver {
         visite[depart[0]][depart[1]] = true;
 
         boolean trouve = false;
+        List<int[]> explorees = new ArrayList<>();
 
         while (!pile.isEmpty()) {
             int[] courant = pile.pop();
             casesExplorees++;
+            explorees.add(new int[]{courant[0], courant[1]});
 
             // Si on a atteint l'arrivée, on arrête
             if (courant[0] == arrivee[0] && courant[1] == arrivee[1]) {
@@ -58,6 +60,8 @@ public class DFSSolver extends LabyrinthSolver {
                 }
             }
         }
+
+        this.cellsExplorees = explorees;
 
         if (!trouve) return new ArrayList<>(); // Aucun chemin
 

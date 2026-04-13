@@ -386,7 +386,6 @@ public class LabyrinthGUI extends JFrame {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             char[][] grille = lab.getGrille();
-            boolean[][] explorees = lab.getExplorees();
 
             // Créer un set des cellules explorées pour vérification rapide
             java.util.Set<String> exploreeSet = new java.util.HashSet<>();

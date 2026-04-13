@@ -1,71 +1,69 @@
-# Labyrinth Solver
+# Labyrinth Solver — DFS & BFS
 
-Projet de résolution de Labyrinthe - Master 1 GLSI & SRT  
-École Supérieure Polytechnique de Dakar  
-Programmation et Algorithmique Avancée
+Résolution de labyrinthes avec algorithmes de graphe  
+
+---
 
 ## Description
 
-Programme permettant de générer, charger et résoudre un labyrinthe en utilisant les algorithmes DFS et BFS.
+Programme Java pour **générer**, **charger** et **résoudre** des labyrinthes avec deux algorithmes :
+- **DFS** (Depth First Search) — Recherche en profondeur
+- **BFS** (Breadth First Search) — Recherche en largeur
 
-## Représentation du labyrinthe
+Deux interfaces : **console** (`LabyrinthApp.java`) et **graphique** (`LabyrinthGUI.java`)
 
-Le labyrinthe est représenté sous forme de matrice 2D :
-- `#` : mur
-- `=` : passage
-- `S` : point de départ
-- `E` : point d'arrivée
-
-Exemple :
-```
-#######
-#S===E#
-#=###=#
-#=====# 
-#######
-```
+---
 
 ## Structure du projet
 
 ```
-LabyrinthSolver/main/
-├── src/
-│   └── LabyrinthSolver.java
-├── labyrinthes/
-│   └── exemple1.txt
+main/
+├── Labyrinth.java              # Modèle du labyrinthe (grille 2D)
+├── LabyrinthSolver.java        # Classe abstraite (base DFS/BFS)
+├── DFSSolver.java              # Algorithme DFS
+├── BFSSolver.java              # Algorithme BFS
+├── LabyrinthLoader.java        # Chargement/génération
+├── Comparateur.java            # Comparaison DFS vs BFS
+├── LabyrinthApp.java           # Interface console
+├── LabyrinthGUI.java           # Interface graphique (Swing)
 ├── .gitignore
 └── README.md
 ```
 
-## Compilation et exécution
+---
 
-### Compiler
+## Compilation & Exécution
+
 ```bash
-cd src
-javac LabyrinthSolver.java
+# Compiler tous les fichiers
+javac *.java
+
+# Console (menu texte)
+java LabyrinthApp
+
+# GUI (interface graphique)
+java LabyrinthGUI
 ```
 
-### Exécuter
-```bash
-java LabyrinthSolver
-```
+---
+
+## Représentation
+
+| Symbole | Signification |
+|---------|--------------|
+| `#` | Mur |
+| `=` | Passage |
+| `S` | Départ |
+| `E` | Arrivée |
+| `+` | Chemin solution |
+
+---
 
 ## Fonctionnalités
 
-- [ ] Charger un labyrinthe depuis un fichier
-- [ ] Générer un labyrinthe aléatoire
-- [ ] Résoudre avec DFS (Depth First Search)
-- [ ] Résoudre avec BFS (Breadth First Search)
-- [ ] Afficher le chemin trouvé
-- [ ] Comparer les performances
-
-## Membres du groupe
-
-À remplir
-
-## Livrables
-
-- Code source documenté sur GitHub
-- Vidéo de présentation (max 10 minutes)
-- Envoyer à : envoitp@gmail.com
-- Sujet : `Projet_Labyrinthe_Gx` (x = numéro du groupe)
+• Charger un labyrinthe depuis fichier `.txt`  
+• Générer un labyrinthe aléatoire (dimensions paramétrables)  
+• Résoudre avec DFS  
+• Résoudre avec BFS  
+• Afficher statistiques (chemin, cases explorées, temps)  
+• Comparer DFS vs BFS
